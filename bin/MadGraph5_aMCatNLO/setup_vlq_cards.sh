@@ -1,7 +1,30 @@
 betaRd33_0_betaL32=-0.15
+betaRd33_0_betaL32_1up=-0.02
+betaRd33_0_betaL32_1down=-0.26
+betaRd33_0_betaL32_2up=0.11
+betaRd33_0_betaL32_2down=-0.37
+
+
 betaRd33_0_betaL23=0.19
+betaRd33_0_betaL23_1up=0.25
+betaRd33_0_betaL23_1down=0.10
+betaRd33_0_betaL23_2up=0.0.31
+betaRd33_0_betaL23_2down=0.0.01
+
+
 betaRd33_minus1_betaL32=-0.21
+betaRd33_minus1_betaL32_1up=-0.16
+betaRd33_minus1_betaL32_1down=-0.26
+betaRd33_minus1_betaL32_2up=-0.11
+betaRd33_minus1_betaL32_2down=-0.31
+
 betaRd33_minus1_betaL23=0.21
+betaRd33_minus1_betaL23_1up=0.26
+betaRd33_minus1_betaL23_1down=0.12
+betaRd33_minus1_betaL23_2up=0.31
+betaRd33_minus1_betaL23_2down=0.02
+
+
 
 mkdir cards/vlq
 
@@ -11,24 +34,47 @@ mU_gU[0,0]="2"
 mU_gU[0,1]="1"
 
 mU_gU[1,0]="2"
-mU_gU[1,1]="1.5"
+mU_gU[1,1]="2"
 
-mU_gU[2,0]="3"
-mU_gU[2,1]="1.5"
+mU_gU[2,0]="2"
+mU_gU[2,1]="3"
 
 mU_gU[3,0]="3"
-mU_gU[3,1]="2"
+mU_gU[3,1]="1"
 
-mU_gU[4,0]="4"
+mU_gU[4,0]="3"
 mU_gU[4,1]="2"
 
-mU_gU[5,0]="4"
-mU_gU[5,1]="2.5"
+mU_gU[5,0]="3"
+mU_gU[5,1]="3"
 
-for ((j=0;j<=5;j++)) 
+mU_gU[6,0]="4"
+mU_gU[6,1]="1"
+
+mU_gU[7,0]="4"
+mU_gU[7,1]="2"
+
+mU_gU[8,0]="4"
+mU_gU[8,1]="3"
+
+
+for ((j=0;j<=8;j++)) 
 do
   for i in betaRd33_0 betaRd33_minus1
   do
+
+    betaL23_string="${i}_betaL23"
+    betaL23_1up_string="${i}_betaL23_1up"
+    betaL23_1down_string="${i}_betaL23_1down"
+    betaL23_2up_string="${i}_betaL23_2up"
+    betaL23_2down_string="${i}_betaL23_2down"
+
+    betaL32_string="${i}_betaL32"
+    betaL32_1up_string="${i}_betaL32_1up"
+    betaL32_1down_string="${i}_betaL32_1down"
+    betaL32_2up_string="${i}_betaL32_2up"
+    betaL32_2down_string="${i}_betaL32_2down"
+
     mkdir "cards/vlq/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}"
     filename="cards/vlq/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}"
     
@@ -342,12 +388,31 @@ do
     echo "launch --rwgt_name=off_diag_0" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 4 0.000000e+00" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 5 0.000000e+00" >> "${filename}_reweight_card.dat"
-    #echo "" >> "${filename}_reweight_card.dat"
-    #echo "change process p p > ta+ ta- / zp gp" >> "${filename}_reweight_card.dat"
-    #echo "launch --rwgt_name=z_a_vlq" >> "${filename}_reweight_card.dat"
-    #echo "" >> "${filename}_reweight_card.dat"
-    #echo "change process p p > ta+ ta- / zp gp vlq vlq~" >> "${filename}_reweight_card.dat"
-    #echo "launch --rwgt_name=z_a" >> "${filename}_reweight_card.dat"
+    echo "launch --rwgt_name=betaL23_1sigma_up" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 4 ${!betaL23_1up_string}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+    echo "launch --rwgt_name=betaL23_1sigma_down" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 4 ${!betaL23_1down_string}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+    echo "launch --rwgt_name=betaL32_1sigma_up" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 5 ${!betaL32_1up_string}" >> "${filename}_reweight_card.dat"
+    echo "launch --rwgt_name=betaL32_1sigma_down" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 5 ${!betaL32_1down_string}" >> "${filename}_reweight_card.dat"
+    echo "launch --rwgt_name=betaL23_2sigma_up" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 4 ${!betaL23_2up_string}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+    echo "launch --rwgt_name=betaL23_2sigma_down" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 4 ${!betaL23_2down_string}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+    # won't include as XS doesn't depend on betaL32 that much
+    #echo "launch --rwgt_name=betaL32_2sigma_up" >> "${filename}_reweight_card.dat"
+    #echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+    #echo "  set nplqcoup 5 ${!betaL32_2up_string}" >> "${filename}_reweight_card.dat"
+    #echo "launch --rwgt_name=betaL32_2sigma_down" >> "${filename}_reweight_card.dat"
+    #echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+    #echo "  set nplqcoup 5 ${!betaL32_2down_string}" >> "${filename}_reweight_card.dat"
 
   done
 done
