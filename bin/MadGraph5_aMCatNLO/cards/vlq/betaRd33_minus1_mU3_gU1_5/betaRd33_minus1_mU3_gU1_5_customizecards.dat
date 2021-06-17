@@ -1,6 +1,0 @@
-set param_card mass 9000007 3
-set param_card nplqcoup 1 1.5
-set param_card nplqcoup 2 1.000000e+00
-set param_card nplqcoup 3 -1.000000e+00
-set param_card nplqcoup 4 0.21
-set param_card nplqcoup 5 -0.21

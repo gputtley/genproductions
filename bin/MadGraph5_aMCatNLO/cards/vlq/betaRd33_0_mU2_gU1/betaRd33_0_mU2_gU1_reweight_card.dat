@@ -1,4 +1,0 @@
-change rwgt_dir ./rwgt
-launch --rwgt_name=off_diag_0
-  set nplqcoup 4 0.000000e+00
-  set nplqcoup 5 0.000000e+00
