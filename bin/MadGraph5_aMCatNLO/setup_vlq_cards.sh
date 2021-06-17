@@ -414,6 +414,9 @@ do
     #echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
     #echo "  set nplqcoup 5 ${!betaL32_2down_string}" >> "${filename}_reweight_card.dat"
 
+   # produce gridpacks
+   eval "./gridpack_generation.sh ${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_} cards/vlq/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}"
+
   done
 done
 
