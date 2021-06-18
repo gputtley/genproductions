@@ -157,7 +157,7 @@ do
     echo "# PDF CHOICE: this automatically fixes also alpha_s and its evol.    *" >> "${filename}_run_card.dat"
     echo "#*********************************************************************" >> "${filename}_run_card.dat"
     echo "     lhapdf = pdlabel ! PDF set" >> "${filename}_run_card.dat"
-    echo "     $DEFAULT_PDF_SETS = lhaid ! If pdlabel=lhapdf, this is the lhapdf number. Only" >> "${filename}_run_card.dat"
+    echo "     \$DEFAULT_PDF_SETS = lhaid ! If pdlabel=lhapdf, this is the lhapdf number. Only" >> "${filename}_run_card.dat"
     echo "                  ! numbers for central PDF sets are allowed. Can be a list;" >> "${filename}_run_card.dat"
     echo "                  ! PDF sets beyond the first are included via reweighting." >> "${filename}_run_card.dat"
     echo "# To see heavy ion options: type \"update ion_pdf\" " >> "${filename}_run_card.dat"
@@ -415,6 +415,45 @@ do
     #echo "launch --rwgt_name=betaL32_2sigma_down" >> "${filename}_reweight_card.dat"
     #echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
     #echo "  set nplqcoup 5 ${!betaL32_2down_string}" >> "${filename}_reweight_card.dat"
+    if [ ${mU_gU[$j,1]} != 1 ]
+    then
+      echo "launch --rwgt_name=gU_1" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 1 1" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+    fi
+    if [ ${mU_gU[$j,1]} != 2 ]
+    then
+      echo "launch --rwgt_name=gU_2" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 1 2" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+    fi
+    if [ ${mU_gU[$j,1]} != 3 ]
+    then
+      echo "launch --rwgt_name=gU_3" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 1 3" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+    fi
+    if [ $i != "betaRd33_0" ]
+    then
+      echo "launch --rwgt_name=betaR33_0" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 1 ${mU_gU[$j,1]}" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 3 0" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+    fi
+    if [ $i != "betaRd33_minus1" ]
+    then
+      echo "launch --rwgt_name=betaR33_minus1" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 1 ${mU_gU[$j,1]}" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 3 -1" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+    fi
+
+
 
    # produce gridpacks
    eval "./gridpack_generation.sh ${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_} cards/vlq/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}"
