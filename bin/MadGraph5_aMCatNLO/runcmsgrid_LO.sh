@@ -136,8 +136,17 @@ if [ -e ./madevent/Cards/reweight_card.dat ]; then
     mv events.lhe.gz ./madevent/Events/GridRun_${rnum}/unweighted_events.lhe.gz
     cd madevent
     echo "0" |./bin/madevent --debug reweight GridRun_${rnum}
+
+    # repeate rewweighting for other modified processes
+    cp Cards/reweight_card_sm.dat Cards/reweight_card.dat
+    echo "0" |./bin/madevent --debug reweight GridRun_${rnum}
+    cp Cards/reweight_card_full.dat Cards/reweight_card.dat
+    echo "0" |./bin/madevent --debug reweight GridRun_${rnum}
+
+    cp Cards/reweight_card_nom.dat Cards/reweight_card.dat
     cd ..
     mv $LHEWORKDIR/process/madevent/Events/GridRun_${rnum}/unweighted_events.lhe.gz $LHEWORKDIR/process/events.lhe.gz
+
 fi
 
 gzip -d $LHEWORKDIR/process/events.lhe.gz

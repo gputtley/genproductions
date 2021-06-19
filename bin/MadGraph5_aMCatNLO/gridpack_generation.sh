@@ -463,6 +463,8 @@ make_gridpack () {
     if [ -e $CARDSDIR/${name}_reweight_card.dat ]; then
       echo "copying custom reweight file"
       cp $CARDSDIR/${name}_reweight_card.dat ./Cards/reweight_card.dat
+      cp $CARDSDIR/${name}_reweight_card_full.dat ./Cards/reweight_card_full.dat
+      cp $CARDSDIR/${name}_reweight_card_nom.dat ./Cards/reweight_card_nom.dat
     fi
    
     if [ -e $CARDSDIR/${name}_param_card.dat ]; then

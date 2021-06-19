@@ -8,8 +8,8 @@ betaRd33_0_betaL32_2down=-0.37
 betaRd33_0_betaL23=0.19
 betaRd33_0_betaL23_1up=0.25
 betaRd33_0_betaL23_1down=0.10
-betaRd33_0_betaL23_2up=0.0.31
-betaRd33_0_betaL23_2down=0.0.01
+betaRd33_0_betaL23_2up=0.31
+betaRd33_0_betaL23_2down=0.01
 
 
 betaRd33_minus1_betaL32=-0.21
@@ -58,9 +58,11 @@ mU_gU[8,0]="4"
 mU_gU[8,1]="3"
 
 
-for ((j=0;j<=8;j++)) 
+#for ((j=0;j<=8;j++)) 
+for ((j=0;j<=0;j++)) 
 do
-  for i in betaRd33_0 betaRd33_minus1
+  #for i in betaRd33_0 betaRd33_minus1
+  for i in betaRd33_0
   do
 
     betaL23_string="${i}_betaL23"
@@ -414,8 +416,31 @@ do
     #echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
     #echo "  set nplqcoup 5 ${!betaL32_2down_string}" >> "${filename}_reweight_card.dat"
 
-   # produce gridpacks
-   eval "./gridpack_generation.sh ${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_} cards/vlq/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}"
+    #echo "launch --rwgt_name=gU_0" >> "${filename}_reweight_card.dat"
+    #echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+    #echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+    #echo "  set nplqcoup 1 0.000000e+00" >> "${filename}_reweight_card.dat"
+    # check that adding this set command here does not break later weights!!!
+
+    cp ${filename}_reweight_card.dat ${filename}_reweight_card_nom.dat
+    cp ${filename}_reweight_card_nom.dat ${filename}_reweight_card_full.dat
+
+    sed -i '/^launch/ s/$/_full/' ${filename}_reweight_card_full.dat
+    sed -i '/^change/ s/$/_full/' ${filename}_reweight_card_full.dat
+    sed -i '2 i change process p p > ta+ ta- \/ zp gp NP=2\nlaunch --rwgt_name=full' ${filename}_reweight_card_full.dat
+    sed -i "4 i \  set nplqcoup 4 ${!betaL23_string}\n  set nplqcoup 5 ${!betaL32_string}" ${filename}_reweight_card_full.dat
+
+    # for sm-only weight we set gU to 0 to turn off the LQ contribution
+    cp ${filename}_reweight_card_full.dat ${filename}_reweight_temp.dat
+    sed -i '/change.*/d' ${filename}_reweight_temp.dat
+    sed -i 's/full/sm\n  set nplqcoup 1 0.000000e+00/g' ${filename}_reweight_temp.dat
+    str=$(echo "  set nplqcoup 4 ${!betaL23_string}\n  set nplqcoup 5 ${!betaL32_string}") 
+    sed -i "3 i \  set nplqcoup 4 ${!betaL23_string}\n  set nplqcoup 5 ${!betaL32_string}" ${filename}_reweight_temp.dat
+    cat ${filename}_reweight_temp.dat >> ${filename}_reweight_card_full.dat
+    rm ${filename}_reweight_temp.dat
+
+    # produce gridpacks
+    eval "./gridpack_generation.sh ${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_} cards/vlq/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}"
 
   done
 done
