@@ -85,13 +85,17 @@ do
     echo "set param_card nplqcoup 1 ${mU_gU[$j,1]}" >> "${filename}_customizecards.dat"
     echo "set param_card nplqcoup 2 1.000000e+00" >> "${filename}_customizecards.dat"
 
+    betaRd33_param=""
+
     if [ $i == "betaRd33_0" ]
     then
+      betaRd33_param="0.000000e+00"
       echo "set param_card nplqcoup 3 0.000000e+00" >> "${filename}_customizecards.dat"
       echo "set param_card nplqcoup 4 ${betaRd33_0_betaL23}" >> "${filename}_customizecards.dat"
       echo "set param_card nplqcoup 5 ${betaRd33_0_betaL32}" >> "${filename}_customizecards.dat"
     elif [ $i == "betaRd33_minus1" ]
     then
+      betaRd33_param="-1.000000e+00"
       echo "set param_card nplqcoup 3 -1.000000e+00" >> "${filename}_customizecards.dat"
       echo "set param_card nplqcoup 4 ${betaRd33_minus1_betaL23}" >> "${filename}_customizecards.dat"
       echo "set param_card nplqcoup 5 ${betaRd33_minus1_betaL32}" >> "${filename}_customizecards.dat"
@@ -162,6 +166,7 @@ do
     echo "     \$DEFAULT_PDF_SETS = lhaid ! If pdlabel=lhapdf, this is the lhapdf number. Only" >> "${filename}_run_card.dat"
     echo "                  ! numbers for central PDF sets are allowed. Can be a list;" >> "${filename}_run_card.dat"
     echo "                  ! PDF sets beyond the first are included via reweighting." >> "${filename}_run_card.dat"
+    echo "     \$DEFAULT_PDF_MEMBERS  = reweight_PDF" >> "${filename}_run_card.dat"
     echo "# To see heavy ion options: type \"update ion_pdf\" " >> "${filename}_run_card.dat"
     echo "#*********************************************************************" >> "${filename}_run_card.dat"
     echo "# Renormalization and factorization scales                           *" >> "${filename}_run_card.dat"
@@ -390,37 +395,45 @@ do
     # Set up reweight_card
     echo "change rwgt_dir ./rwgt" > "${filename}_reweight_card.dat"
     echo "launch --rwgt_name=off_diag_0" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 1 ${mU_gU[$j,1]}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 4 0.000000e+00" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 5 0.000000e+00" >> "${filename}_reweight_card.dat"
     echo "launch --rwgt_name=betaL23_1sigma_up" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 1 ${mU_gU[$j,1]}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 4 ${!betaL23_1up_string}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
     echo "launch --rwgt_name=betaL23_1sigma_down" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 1 ${mU_gU[$j,1]}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 4 ${!betaL23_1down_string}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
     echo "launch --rwgt_name=betaL32_1sigma_up" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 1 ${mU_gU[$j,1]}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 5 ${!betaL32_1up_string}" >> "${filename}_reweight_card.dat"
     echo "launch --rwgt_name=betaL32_1sigma_down" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 1 ${mU_gU[$j,1]}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 5 ${!betaL32_1down_string}" >> "${filename}_reweight_card.dat"
     echo "launch --rwgt_name=betaL23_2sigma_up" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 1 ${mU_gU[$j,1]}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 4 ${!betaL23_2up_string}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
     echo "launch --rwgt_name=betaL23_2sigma_down" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 1 ${mU_gU[$j,1]}" >> "${filename}_reweight_card.dat"
+    echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 4 ${!betaL23_2down_string}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-    # won't include as XS doesn't depend on betaL32 that much
-    #echo "launch --rwgt_name=betaL32_2sigma_up" >> "${filename}_reweight_card.dat"
-    #echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-    #echo "  set nplqcoup 5 ${!betaL32_2up_string}" >> "${filename}_reweight_card.dat"
-    #echo "launch --rwgt_name=betaL32_2sigma_down" >> "${filename}_reweight_card.dat"
-    #echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-    #echo "  set nplqcoup 5 ${!betaL32_2down_string}" >> "${filename}_reweight_card.dat"
     if [ ${mU_gU[$j,1]} != 1 ]
     then
       echo "launch --rwgt_name=gU_1" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 1 1" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
     fi
@@ -428,6 +441,7 @@ do
     then
       echo "launch --rwgt_name=gU_2" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 1 2" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
     fi
@@ -435,6 +449,7 @@ do
     then
       echo "launch --rwgt_name=gU_3" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 1 3" >> "${filename}_reweight_card.dat"
+      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
     fi
@@ -457,11 +472,6 @@ do
 
 
 
-    #echo "launch --rwgt_name=gU_0" >> "${filename}_reweight_card.dat"
-    #echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-    #echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-    #echo "  set nplqcoup 1 0.000000e+00" >> "${filename}_reweight_card.dat"
-    # check that adding this set command here does not break later weights!!!
 
     cp ${filename}_reweight_card.dat ${filename}_reweight_card_nom.dat
     cp ${filename}_reweight_card_nom.dat ${filename}_reweight_card_full.dat
@@ -469,14 +479,13 @@ do
     sed -i '/^launch/ s/$/_full/' ${filename}_reweight_card_full.dat
     sed -i '/^change/ s/$/_full/' ${filename}_reweight_card_full.dat
     sed -i '2 i change process p p > ta+ ta- \/ zp gp NP=2\nlaunch --rwgt_name=full' ${filename}_reweight_card_full.dat
-    sed -i "4 i \  set nplqcoup 4 ${!betaL23_string}\n  set nplqcoup 5 ${!betaL32_string}" ${filename}_reweight_card_full.dat
+    sed -i "4 i \  set nplqcoup 1 ${mU_gU[$j,1]}\n  set nplqcoup 3 ${betaRd33_param}\n  set nplqcoup 4 ${!betaL23_string}\n  set nplqcoup 5 ${!betaL32_string}" ${filename}_reweight_card_full.dat
 
     # for sm-only weight we set gU to 0 to turn off the LQ contribution
     cp ${filename}_reweight_card_full.dat ${filename}_reweight_temp.dat
+    sed -i '/nplqcoup 1/d' ${filename}_reweight_temp.dat
     sed -i '/change.*/d' ${filename}_reweight_temp.dat
     sed -i 's/full/sm\n  set nplqcoup 1 0.000000e+00/g' ${filename}_reweight_temp.dat
-    str=$(echo "  set nplqcoup 4 ${!betaL23_string}\n  set nplqcoup 5 ${!betaL32_string}") 
-    sed -i "3 i \  set nplqcoup 4 ${!betaL23_string}\n  set nplqcoup 5 ${!betaL32_string}" ${filename}_reweight_temp.dat
     cat ${filename}_reweight_temp.dat >> ${filename}_reweight_card_full.dat
     rm ${filename}_reweight_temp.dat
 
