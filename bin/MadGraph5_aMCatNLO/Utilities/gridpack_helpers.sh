@@ -119,11 +119,16 @@ prepare_reweight () {
         echo "0" | ./bin/aMCatNLO --debug reweight pilotrun
     else
         echo "0" | ./bin/madevent --debug reweight pilotrun
+
+        echo "setting up reweighting for other process"
+        cp Cards/reweight_card_full.dat Cards/reweight_card.dat
+        echo "0" | ./bin/madevent --debug reweight pilotrun
+        cp Cards/reweight_card_nom.dat Cards/reweight_card.dat
     fi
 
     # Explicitly compile all subprocesses to avoid
     # compilation on the cluster
-    for file in $(ls -d rwgt/*/SubProcesses/P*); do
+    for file in $(ls -d rwgt*/*/SubProcesses/P*); do
         echo "Compiling subprocess $(basename $file)"
         cd $file
         for i in 2 3; do
