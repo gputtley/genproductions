@@ -58,12 +58,9 @@ mU_gU[8,0]="4"
 mU_gU[8,1]="3"
 
 
-#for ((j=0;j<=8;j++)) 
-#for ((j=6;j<=6;j++))
-for j in 6; 
+for ((j=0;j<=8;j++)) 
 do
-#  for i in betaRd33_0 betaRd33_minus1
-  for i in betaRd33_0
+  for i in betaRd33_0 betaRd33_minus1
   do
 
     betaL23_string="${i}_betaL23"
