@@ -30,35 +30,22 @@ mkdir cards/vlq
 
 declare -A mU_gU
 
-mU_gU[0,0]="2"
+mU_gU[0,0]="1"
 mU_gU[0,1]="1"
 
 mU_gU[1,0]="2"
-mU_gU[1,1]="2"
+mU_gU[1,1]="1"
 
-mU_gU[2,0]="2"
-mU_gU[2,1]="3"
+mU_gU[2,0]="3"
+mU_gU[2,1]="1"
 
-mU_gU[3,0]="3"
+mU_gU[3,0]="4"
 mU_gU[3,1]="1"
 
-mU_gU[4,0]="3"
-mU_gU[4,1]="2"
+mU_gU[4,0]="5"
+mU_gU[4,1]="1"
 
-mU_gU[5,0]="3"
-mU_gU[5,1]="3"
-
-mU_gU[6,0]="4"
-mU_gU[6,1]="1"
-
-mU_gU[7,0]="4"
-mU_gU[7,1]="2"
-
-mU_gU[8,0]="4"
-mU_gU[8,1]="3"
-
-
-for ((j=0;j<=8;j++)) 
+for ((j=0;j<=4;j++)) 
 do
   for i in betaRd33_0 betaRd33_minus1
   do
