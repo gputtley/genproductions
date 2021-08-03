@@ -497,7 +497,7 @@ make_gridpack () {
       if [ -e $CARDSDIR/${name}_reweight_card.dat ]; then
           echo "preparing reweighting step"
           prepare_reweight $isnlo $WORKDIR $scram_arch $CARDSDIR/${name}_reweight_card.dat
-	  extract_width $isnlo $WORKDIR $CARDSDIR ${name}
+          extract_width $isnlo $WORKDIR $CARDSDIR ${name}
       fi
       
       echo "finished pilot run"
