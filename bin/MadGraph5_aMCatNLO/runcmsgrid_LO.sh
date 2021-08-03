@@ -138,8 +138,6 @@ if [ -e ./madevent/Cards/reweight_card.dat ]; then
     echo "0" |./bin/madevent --debug reweight GridRun_${rnum}
 
     # repeate rewweighting for other modified processes
-    cp Cards/reweight_card_sm.dat Cards/reweight_card.dat
-    echo "0" |./bin/madevent --debug reweight GridRun_${rnum}
     cp Cards/reweight_card_full.dat Cards/reweight_card.dat
     echo "0" |./bin/madevent --debug reweight GridRun_${rnum}
 

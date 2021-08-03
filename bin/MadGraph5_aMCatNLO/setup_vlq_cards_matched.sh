@@ -1,3 +1,27 @@
+# mg recomend to set qcut in the range 1/6-1/3 * the hard scale
+# for the VLQ events the hard scale on average is ~ 187 which means the acceptable range is ~ 30-60
+
+# nominal choice for xqcut and qcut (set in pythia) are xqcut=30 and qcut=40 to give smooth DJR plots
+# for uncertainties multiply qcut by 1/2 and 2
+# for each of these set xqcut to minimum of qcut -10 and qcut/1.4
+# therefore up sets xqcut to 60 and qcut to 80
+# and down sets xqcut to 10 and qcut to 20 
+
+xqcut="30.0"
+name_extra="_matched"
+
+if [ "$1" == "up" ]; then
+  xqcut="60.0"
+  name_extra="_matched_xqcut_up"
+elif [ "$1" == "down" ]; then
+  xqcut="10.0"
+  name_extra="_matched_xqcut_down"
+fi
+
+
+echo $name_extra
+echo $xqcut
+
 betaRd33_0_betaL32=-0.15
 betaRd33_0_betaL32_1up=-0.02
 betaRd33_0_betaL32_1down=-0.26
@@ -26,7 +50,7 @@ betaRd33_minus1_betaL23_2down=0.02
 
 
 
-mkdir cards/vlq
+mkdir cards/vlq_matched
 
 declare -A mU_gU
 
@@ -59,10 +83,9 @@ mU_gU[8,1]="3"
 
 
 #for ((j=0;j<=8;j++)) 
-#for ((j=6;j<=6;j++))
-for j in 6; 
+for ((j=6;j<=6;j++)) 
 do
-#  for i in betaRd33_0 betaRd33_minus1
+  #for i in betaRd33_0 betaRd33_minus1
   for i in betaRd33_0
   do
 
@@ -78,8 +101,8 @@ do
     betaL32_2up_string="${i}_betaL32_2up"
     betaL32_2down_string="${i}_betaL32_2down"
 
-    mkdir "cards/vlq/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}"
-    filename="cards/vlq/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}"
+    mkdir "cards/vlq_matched/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}${name_extra}"
+    filename="cards/vlq_matched/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}${name_extra}/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}${name_extra}"
     
     # Set up customizecard
     echo "set param_card mass 9000007 ${mU_gU[$j,0]}.000000e+03" > "${filename}_customizecards.dat"
@@ -104,9 +127,9 @@ do
       echo "set param_card nplqcoup 5 ${betaRd33_minus1_betaL32}" >> "${filename}_customizecards.dat"
       # width is ~ 0.004*[mass (TeV)]^2 * mass (GeV) for best fit values of coupling vs mass when off diagonal elements are set to 0
       width=$(echo ${mU_gU[$j,0]}*${mU_gU[$j,0]}*0.004*${mU_gU[$j,0]}*1000 | bc)
-    fi
+    fi    
     echo width = ${width}
-    echo "set param_card DECAY 9000007 ${width}" >> "${filename}_customizecards.dat"   
+    echo "set param_card DECAY 9000007 ${width}" >> "${filename}_customizecards.dat"
 
     # Set up proc_card
     echo "set default_unset_couplings 99" > "${filename}_proc_card.dat"
@@ -121,7 +144,8 @@ do
     echo "define p = 21 2 4 1 3 -2 -4 -1 -3 5 -5 # pass to 5 flavors" >> "${filename}_proc_card.dat"
     echo "define j = p" >> "${filename}_proc_card.dat"
     echo "generate p p > ta+ ta- / zp gp z a" >> "${filename}_proc_card.dat"
-    echo "output ${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_} -nojpeg" >> "${filename}_proc_card.dat"
+    echo "add process p p > ta+ ta- j / zp gp z a $ vlq vlq~" >> "${filename}_proc_card.dat"
+    echo "output ${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}${name_extra} -nojpeg" >> "${filename}_proc_card.dat"
 
 
     # Set up run_card
@@ -197,13 +221,13 @@ do
     echo "#*********************************************************************" >> "${filename}_run_card.dat"
     echo "# Matching parameter (MLM only)" >> "${filename}_run_card.dat"
     echo "#*********************************************************************" >> "${filename}_run_card.dat"
-    echo " 0 = ickkw            ! 0 no matching, 1 MLM" >> "${filename}_run_card.dat"
+    echo " 1 = ickkw            ! 0 no matching, 1 MLM" >> "${filename}_run_card.dat"
     echo " 1.0 = alpsfact         ! scale factor for QCD emission vx" >> "${filename}_run_card.dat"
     echo " False = chcluster        ! cluster only according to channel diag" >> "${filename}_run_card.dat"
     echo " 5 = asrwgtflavor     ! highest quark flavor for a_s reweight" >> "${filename}_run_card.dat"
     echo " True  = auto_ptj_mjj  ! Automatic setting of ptj and mjj if xqcut >0" >> "${filename}_run_card.dat"
     echo "                                   ! (turn off for VBF and single top processes)" >> "${filename}_run_card.dat"
-    echo " 0.0   = xqcut   ! minimum kt jet measure between partons" >> "${filename}_run_card.dat"
+    echo " ${xqcut}   = xqcut   ! minimum kt jet measure between partons" >> "${filename}_run_card.dat"
     echo "#*********************************************************************" >> "${filename}_run_card.dat"
     echo "#" >> "${filename}_run_card.dat"
     echo "#*********************************************************************" >> "${filename}_run_card.dat"
@@ -238,7 +262,11 @@ do
     echo "#*********************************************************************" >> "${filename}_run_card.dat"
     echo "# Minimum and maximum pt's (for max, -1 means no cut)                *" >> "${filename}_run_card.dat"
     echo "#*********************************************************************" >> "${filename}_run_card.dat"
-    echo " 20.0  = ptj       ! minimum pt for the jets" >> "${filename}_run_card.dat"
+    if [ "$1" == "down" ]; then
+      echo " ${xqcut}  = ptj       ! minimum pt for the jets" >> "${filename}_run_card.dat"
+    else
+      echo " 20.0  = ptj       ! minimum pt for the jets" >> "${filename}_run_card.dat"
+    fi
     echo " 0.0  = ptb       ! minimum pt for the b" >> "${filename}_run_card.dat"
     echo " 10.0  = pta       ! minimum pt for the photons" >> "${filename}_run_card.dat"
     echo " 10.0  = ptl       ! minimum pt for the charged leptons" >> "${filename}_run_card.dat"
@@ -531,13 +559,14 @@ do
     echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
     echo "  set nplqcoup 6 0.5" >> "${filename}_reweight_card.dat"
 
+
     cp ${filename}_reweight_card.dat ${filename}_reweight_card_nom.dat
     cp ${filename}_reweight_card_nom.dat ${filename}_reweight_card_full.dat
 
     sed -i '/^launch/ s/$/_full/' ${filename}_reweight_card_full.dat
     sed -i '/^change/ s/$/_full/' ${filename}_reweight_card_full.dat
-    sed -i '2 i change process p p > ta+ ta- \/ zp gp NP=2\nlaunch --rwgt_name=full' ${filename}_reweight_card_full.dat
-    sed -i "4 i \  set nplqcoup 1 ${mU_gU[$j,1]}\n  set nplqcoup 3 ${betaRd33_param}\n  set nplqcoup 4 ${!betaL23_string}\n  set nplqcoup 5 ${!betaL32_string}\n  set nplqcoup 6 0" ${filename}_reweight_card_full.dat
+    sed -i '2 i change process p p > ta+ ta- \/ zp gp NP=2\nchange process p p > ta+ ta- j \/ zp gp \$ vlq vlq~ NP=2 --add\nlaunch --rwgt_name=full' ${filename}_reweight_card_full.dat
+    sed -i "5 i \  set nplqcoup 1 ${mU_gU[$j,1]}\n  set nplqcoup 3 ${betaRd33_param}\n  set nplqcoup 4 ${!betaL23_string}\n  set nplqcoup 5 ${!betaL32_string}\n  set nplqcoup 6 0" ${filename}_reweight_card_full.dat
 
     # for sm-only weight we set gU to 0 to turn off the LQ contribution
     cp ${filename}_reweight_card_full.dat ${filename}_reweight_temp.dat
@@ -548,7 +577,7 @@ do
     rm ${filename}_reweight_temp.dat
 
     # produce gridpacks
-    eval "./gridpack_generation.sh ${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_} cards/vlq/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}"
+    eval "./gridpack_generation.sh ${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}${name_extra} cards/vlq_matched/${i}_mU${mU_gU[$j,0]/'.'/_}_gU${mU_gU[$j,1]/'.'/_}${name_extra}"
 
   done
 done
