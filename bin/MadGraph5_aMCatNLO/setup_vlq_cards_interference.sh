@@ -1,10 +1,3 @@
-name_extra=""
-if [ "$1" == "up" ]; then
-  name_extra="_width_up"
-elif [ "$1" == "down" ]; then
-  name_extra="_width_down"
-fi
-
 betaRd33_0_betaL32=-0.15
 betaRd33_0_betaL32_1up=-0.02
 betaRd33_0_betaL32_1down=-0.26
@@ -35,8 +28,8 @@ mkdir cards/vlq
 
 mU=(500 1000 2000 3000 4000 5000)
 
-for mass in 4000;
 #for mass in ${mU[@]};
+for mass in 4000;
 do
   #for i in betaRd33_0 betaRd33_minus1
   for i in betaRd33_0
@@ -64,8 +57,8 @@ do
       betaL32_2up_string="${i}_betaL32_2up"
       betaL32_2down_string="${i}_betaL32_2down"
   
-      mkdir "cards/vlq/${i}_${j}_mU${mass}_gU1_interference${name_extra}"
-      filename="cards/vlq/${i}_${j}_mU${mass}_gU1_interference${name_extra}/${i}_${j}_mU${mass}_gU1_interference${name_extra}"
+      mkdir "cards/vlq/${i}_${j}_mU${mass}_gU1_interference"
+      filename="cards/vlq/${i}_${j}_mU${mass}_gU1_interference/${i}_${j}_mU${mass}_gU1_interference"
       
       # Set up customizecard
       echo "set param_card mass 9000007 ${mass}" > "${filename}_customizecards.dat"
@@ -82,8 +75,6 @@ do
         echo "set param_card nplqcoup 5 ${betaRd33_0_betaL32}" >> "${filename}_customizecards.dat"
         # width is ~ 0.0045*[mass (TeV)]^2 * mass (GeV) for best fit values of coupling vs mass when off diagonal elements are set to 0
         width=$(echo ${mass}*${mass}*0.0045*${mass}/1000000 | bc -l)
-        width_up=$(echo ${mass}*${mass}*0.0045*${mass}*2.0/1000000 | bc -l)
-        width_down=$(echo ${mass}*${mass}*0.0045*${mass}*0.5/1000000 | bc -l)
       elif [ $i == "betaRd33_minus1" ]
       then
         betaRd33_param="-1.000000e+00"
@@ -92,17 +83,6 @@ do
         echo "set param_card nplqcoup 5 ${betaRd33_minus1_betaL32}" >> "${filename}_customizecards.dat"
         # width is ~ 0.004*[mass (TeV)]^2 * mass (GeV) for best fit values of coupling vs mass when off diagonal elements are set to 0
         width=$(echo ${mass}*${mass}*0.004*${mass}/1000000 | bc -l)
-        width_up=$(echo ${mass}*${mass}*0.004*${mass}*2.0/1000000 | bc -l)
-        width_down=$(echo ${mass}*${mass}*0.004*${mass}*0.5/1000000 | bc -l)
-      fi
-      if [ "$1" == "up" ]; then
-        width=$(echo ${width}*2.0 | bc -l)
-        width=$(echo ${width_up}*2.0 | bc -l)
-        width=$(echo ${width_down}*2.0 | bc -l)
-      elif [ "$1" == "down" ]; then
-        width=$(echo ${width}*0.5 | bc -l)
-        width=$(echo ${width_up}*0.5 | bc -l)
-        width=$(echo ${width_down}*0.5 | bc -l)
       fi
       echo width = ${width}
       echo "set param_card DECAY 9000007 ${width}" >> "${filename}_customizecards.dat"   
@@ -120,7 +100,7 @@ do
       echo "define p = 21 2 4 1 3 -2 -4 -1 -3 5 -5 # pass to 5 flavors" >> "${filename}_proc_card.dat"
       echo "define j = p" >> "${filename}_proc_card.dat"
       echo "generate p p > ta+ ta- / zp gp NP^2==2 QED^2==2" >> "${filename}_proc_card.dat"
-      echo "output ${i}_${j}_mU${mass}_gU1_interference${name_extra} -nojpeg" >> "${filename}_proc_card.dat"
+      echo "output ${i}_${j}_mU${mass}_gU1_interference -nojpeg" >> "${filename}_proc_card.dat"
   
   
       # Set up run_card
@@ -457,20 +437,6 @@ do
       echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
       echo "  set decay 9000007 ${width}" >> "${filename}_reweight_card.dat"
-      echo "launch --rwgt_name=gU_2" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 1 2" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
-      echo "  set decay 9000007 ${width}" >> "${filename}_reweight_card.dat"
-      echo "launch --rwgt_name=gU_3" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 1 3" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
-      echo "  set decay 9000007 ${width}" >> "${filename}_reweight_card.dat"
       if [ $i != "betaRd33_0" ]
       then
         echo "launch --rwgt_name=betaR33_0" >> "${filename}_reweight_card.dat"
@@ -491,41 +457,6 @@ do
         echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
         echo "  set decay 9000007 ${width}" >> "${filename}_reweight_card.dat"
       fi
-      echo "launch --rwgt_name=gU_4" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 1 4" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
-      echo "  set decay 9000007 ${width}" >> "${filename}_reweight_card.dat"
-      echo "launch --rwgt_name=gU_5" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 1 5" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
-      echo "  set decay 9000007 ${width}" >> "${filename}_reweight_card.dat"
-      echo "launch --rwgt_name=gU_0p5" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 1 0.5" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
-      echo "  set decay 9000007 ${width}" >> "${filename}_reweight_card.dat"
-      echo "launch --rwgt_name=gU_10" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 1 10" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
-      echo "  set decay 9000007 ${width}" >> "${filename}_reweight_card.dat"
-      echo "launch --rwgt_name=gU_20" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 1 20" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
-      echo "  set decay 9000007 ${width}" >> "${filename}_reweight_card.dat"
       echo "launch --rwgt_name=kappaU_1" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 1 1" >> "${filename}_reweight_card.dat"
       echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
@@ -541,40 +472,28 @@ do
       echo "  set nplqcoup 6 0.5" >> "${filename}_reweight_card.dat"
       echo "  set decay 9000007 ${width}" >> "${filename}_reweight_card.dat"
 
-      echo "launch --rwgt_name=width_times_2" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 1 1" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
-      echo "  set decay 9000007 ${width_up}" >> "${filename}_reweight_card.dat"
-
-      echo "launch --rwgt_name=width_times_0p5" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 1 1" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
-      echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
-      echo "  set decay 9000007 ${width_down}" >> "${filename}_reweight_card.dat"
+      # set up weights for different couplings gU since the width depends on gU and the interference can change with the width
+      # automatically compute the width for each coupling
+      for g in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3.0 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4.0 5.0 10.0
+      do
+        g_name=$(echo "${g}" | tr '.' 'p')
+        echo "launch --rwgt_name=gU_${g_name}" >> "${filename}_reweight_card.dat"
+        echo "  set nplqcoup 1 ${g}" >> "${filename}_reweight_card.dat"
+        echo "  set nplqcoup 3 ${betaRd33_param}" >> "${filename}_reweight_card.dat"
+        echo "  set nplqcoup 4 ${!betaL23_string}" >> "${filename}_reweight_card.dat"
+        echo "  set nplqcoup 5 ${!betaL32_string}" >> "${filename}_reweight_card.dat"
+        echo "  set nplqcoup 6 0" >> "${filename}_reweight_card.dat"
+        echo "  set decay 9000007 Auto" >> "${filename}_reweight_card.dat"
+      done
 
       cp ${filename}_reweight_card.dat ${filename}_reweight_card_nom.dat
-      cp ${filename}_reweight_card_nom.dat ${filename}_reweight_card_full.dat
-  
-      sed -i '/^launch/ s/$/_full/' ${filename}_reweight_card_full.dat
-      sed -i '/^change/ s/$/_full/' ${filename}_reweight_card_full.dat
-      sed -i '2 i change process p p > ta+ ta- \/ zp gp NP^2==2 QED^2==2\nlaunch --rwgt_name=full' ${filename}_reweight_card_full.dat
-      sed -i "4 i \  set nplqcoup 1 1\n  set nplqcoup 3 ${betaRd33_param}\n  set nplqcoup 4 ${!betaL23_string}\n  set nplqcoup 5 ${!betaL32_string}\n  set nplqcoup 6 0" ${filename}_reweight_card_full.dat
-  
-      # for sm-only weight we set gU to 0 to turn off the LQ contribution
-      cp ${filename}_reweight_card_full.dat ${filename}_reweight_temp.dat
-      sed -i '/nplqcoup 1/d' ${filename}_reweight_temp.dat
-      sed -i '/change.*/d' ${filename}_reweight_temp.dat
-      sed -i 's/full/sm\n  set nplqcoup 1 0.000000e+00/g' ${filename}_reweight_temp.dat
-      cat ${filename}_reweight_temp.dat >> ${filename}_reweight_card_full.dat
-      rm ${filename}_reweight_temp.dat
+
+      # make dummy reweighting file since we dont want to use these weights for anything
+      rm ${filename}_reweight_card_full.dat
+      touch ${filename}_reweight_card_full.dat
   
       # produce gridpacks
-      eval "./gridpack_generation.sh ${i}_${j}_mU${mass}_gU1_interference${name_extra} cards/vlq/${i}_${j}_mU${mass}_gU1_interference${name_extra}"
+      eval "./gridpack_generation.sh ${i}_${j}_mU${mass}_gU1_interference cards/vlq/${i}_${j}_mU${mass}_gU1_interference"
 
     done
   done
