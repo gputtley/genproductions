@@ -10,8 +10,10 @@ parser.add_argument('--submit', help= 'Submit gridpack generation jobs',  action
 args = parser.parse_args()
 
 
-mA_list = [100,300,500]
-mphi_list = [100,300,500]
+#mA_list = [100,300,500]
+#mphi_list = [100,300,500]
+mA_list = [500]
+mphi_list = [500]
 
 
 ### Input params needed for type X 2HDM ###
@@ -135,6 +137,7 @@ customize_card = [
 "set param_card yukawagui 3 3 {}".format(GUI3x3),
                  ]
 
+
 proc_card = [
 "set group_subprocesses Auto",
 "set ignore_six_quark_processes False",
@@ -155,8 +158,8 @@ proc_card = [
 "import model 2HDM_NLO",
 "define p = g u c d s b u~ c~ d~ s~ b~",
 "define j = p",
-"generate p p  > __phi__ h3 > ta+ ta- ta+ ta- [QCD]",
-"output ppToPhi__mphi__A__mA__To4Tau -nojpeg ",
+"generate u u~  > __phi__ h3 [QCD]",#"generate p p~  > __phi__ h3 > ta+ ta- ta+ ta- [QCD]",
+"output phi__mphi__A__mA__To4Tau -nojpeg ",
             ]
 
 run_card = [
@@ -227,7 +230,7 @@ run_card = [
 "# PDF choice: this automatically fixes also alpha_s(MZ) and its evol.  *",
 "#***********************************************************************",
 " nn23nlo = pdlabel ! PDF set",
-" 244600  = lhaid   ! If pdlabel=lhapdf, this is the lhapdf number. Only",
+" 306000  = lhaid   ! If pdlabel=lhapdf, this is the lhapdf number. Only",
 "              ! numbers for central PDF sets are allowed. Can be a list;",
 "              ! PDF sets beyond the first are included via reweighting.",
 "#***********************************************************************",
@@ -402,4 +405,4 @@ for mA in mA_list:
     if args.generate and not args.submit: os.system("./gridpack_generation.sh {} {}/{}".format(filename,directory,filename))
     if args.submit:
       WriteListToFile(AppendLinesInList(submit_file,["__filename__","__directory__"],[filename,directory]),filename+"_gridpack_submissions.sh")
-      os.system("qsub -e {}_gridpack_submissions_error.txt -o {}_gridpack_submissions_output.txt -V -q hep.q -l h_rt=0:180:0 -cwd {}_gridpack_submissions.sh".format(filename,filename,filename))
+      os.system("qsub -e {}_gridpack_submissions_error.txt -o {}_gridpack_submissions_output.txt -V -q hep.q -l h_rt=0:600:0 -cwd {}_gridpack_submissions.sh".format(filename,filename,filename))
