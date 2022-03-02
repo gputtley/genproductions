@@ -139,15 +139,14 @@ customize_card = [
 
 
 proc_card = [
+"set default_unset_couplings 99",
 "set group_subprocesses Auto",
 "set ignore_six_quark_processes False",
-"set low_mem_multicore_nlo_generation False",
-"set complex_mass_scheme False",
-"set gauge unitary",
 "set loop_optimized_output True",
 "set loop_color_flows False",
+"set gauge unitary",
+"set complex_mass_scheme False",
 "set max_npoint_for_channel 0",
-"set default_unset_couplings 99",
 "import model sm",
 "define p = g u c d s u~ c~ d~ s~",
 "define j = g u c d s u~ c~ d~ s~",
@@ -158,7 +157,7 @@ proc_card = [
 "import model 2HDM_NLO",
 "define p = g u c d s b u~ c~ d~ s~ b~",
 "define j = p",
-"generate u u~  > __phi__ h3 [QCD]",#"generate p p~  > __phi__ h3 > ta+ ta- ta+ ta- [QCD]",
+"generate p p > __phi__ h3 [QCD]",
 "output phi__mphi__A__mA__To4Tau -nojpeg ",
             ]
 
@@ -230,7 +229,7 @@ run_card = [
 "# PDF choice: this automatically fixes also alpha_s(MZ) and its evol.  *",
 "#***********************************************************************",
 " nn23nlo = pdlabel ! PDF set",
-" 306000  = lhaid   ! If pdlabel=lhapdf, this is the lhapdf number. Only",
+" 244600  = lhaid   ! If pdlabel=lhapdf, this is the lhapdf number. Only",
 "              ! numbers for central PDF sets are allowed. Can be a list;",
 "              ! PDF sets beyond the first are included via reweighting.",
 "#***********************************************************************",
@@ -294,7 +293,6 @@ run_card = [
 " 15.0  = bwcutoff",
 "#***********************************************************************",
 "# Cuts on the jets. Jet clustering is performed by FastJet.            *",
-"#  - If gamma_is_j, photons are also clustered                            *",
 "#  - When matching to a parton shower, these generation cuts should be *",
 "#    considerably softer than the analysis cuts.                       *",
 "#  - More specific cuts can be specified in SubProcesses/cuts.f        *",
@@ -303,7 +301,6 @@ run_card = [
 "  0.7  = jetradius ! The radius parameter for the jet algorithm",
 " 10.0  = ptj       ! Min jet transverse momentum",
 " -1.0  = etaj      ! Max jet abs(pseudo-rap) (a value .lt.0 means no cut)",
-" True = gamma_is_j! Wether to cluster photons as jets or not",
 "#***********************************************************************",
 "# Cuts on the charged leptons (e+, e-, mu+, mu-, tau+ and tau-)        *",
 "# More specific cuts can be specified in SubProcesses/cuts.f           *",
@@ -313,23 +310,14 @@ run_card = [
 "  0.0  = drll    ! Min distance between opposite sign lepton pairs",
 "  0.0  = drll_sf ! Min distance between opp. sign same-flavor lepton pairs",
 "  0.0  = mll     ! Min inv. mass of all opposite sign lepton pairs",
-"  30.0  = mll_sf  ! Min inv. mass of all opp. sign same-flavor lepton pairs",
+" 30.0  = mll_sf  ! Min inv. mass of all opp. sign same-flavor lepton pairs",
 "#***********************************************************************",
-"# Fermion-photon recombination parameters                              *",
-"# If Rphreco=0, no recombination is performed                          *",
-"#***********************************************************************",
-" 0.1  = Rphreco  ! Minimum fermion-photon distance for recombination",
-" -1.0  = etaphreco  ! Maximum abs(pseudo-rap) for photons to be recombined (a value .lt.0 means no cut)",
-" True  = lepphreco  ! Recombine photons and leptons together",
-" True  = quarkphreco  ! Recombine photons and quarks together",
-"#***********************************************************************",
-"# Photon-isolation cuts, according to hep-ph/9801442                   *",
-"# Not applied if gamma_is_j                                            *",
-"# When ptgmin=0, all the other parameters are ignored                  *",
+"# Photon-isolation cuts, according to hep-ph/9801442. When ptgmin=0,   *",
+"# all the other parameters are ignored.                                *",
 "# More specific cuts can be specified in SubProcesses/cuts.f           *",
 "#***********************************************************************",
-"  20.0  = ptgmin    ! Min photon transverse momentum",
-"  -1.0  = etagamma  ! Max photon abs(pseudo-rap)",
+" 20.0  = ptgmin    ! Min photon transverse momentum",
+" -1.0  = etagamma  ! Max photon abs(pseudo-rap)",
 "  0.4  = R0gamma   ! Radius of isolation code",
 "  1.0  = xn        ! n parameter of eq.(3.4) in hep-ph/9801442",
 "  1.0  = epsgamma  ! epsilon_gamma parameter of eq.(3.4) in hep-ph/9801442",
@@ -344,17 +332,16 @@ run_card = [
 "  {} = pt_max_pdg ! Max pT for a massive particle",
 "  {} = mxx_min_pdg ! inv. mass for any pair of (anti)particles",
 "#***********************************************************************",
-"# Use PineAPPL to generate PDF-independent fast-interpolation grid     *",
-"# (https://zenodo.org/record/3992765#.X2EWy5MzbVo)                     *",
+"# For aMCfast+APPLGRID use in PDF fitting (http://amcfast.hepforge.org)*",
 "#***********************************************************************",
-" False = pineappl ! PineAPPL switch",
+" 0 = iappl ! aMCfast switch (0=OFF, 1=prepare grids, 2=fill grids)",
 "#***********************************************************************",
-           ]
+]
 
 submit_file = [
 "source /vols/grid/cms/setup.sh",
 "./gridpack_generation.sh __filename__ __directory__/__filename__"
-              ]
+]
 
 
 def AppendLinesInList(lst,search,replace):
