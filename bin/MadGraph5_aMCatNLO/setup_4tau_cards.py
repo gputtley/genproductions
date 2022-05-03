@@ -237,7 +237,7 @@ run_card = [
 "# shower (HERWIG6 | HERWIGPP | PYTHIA6Q | PYTHIA6PT | PYTHIA8)         *",
 "# WARNING: PYTHIA6PT works only for processes without FSR!!!!          *",
 "#***********************************************************************",
-"  HERWIG6   = parton_shower",
+"  PYTHIA8   = parton_shower",
 "  1.0 = shower_scale_factor ! multiply default shower starting",
 "                                  ! scale by this factor",
 "#***********************************************************************",

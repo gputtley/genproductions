@@ -469,7 +469,10 @@ make_gridpack () {
       echo "copying custom params file"
       cp $CARDSDIR/${name}_param_card.dat ./Cards/param_card.dat
     fi
-     
+
+    ## Edit setcuts.f file to fix compilation error ##
+    #sed -i '592i \ \ \ \ \ \ \ \ \ \ \ \ taumin_s(iFKS,ichan)=max(taumin_s(iFKS,ichan),400d0)' ./SubProcesses/setcuts.f
+ 
     if [ "$isnlo" -gt "0" ]; then
     #NLO mode  
       #######################
