@@ -9,52 +9,34 @@ parser.add_argument('--generate', help= 'Generate gridpacks',  action='store_tru
 parser.add_argument('--submit', help= 'Submit gridpack generation jobs',  action='store_true')
 args = parser.parse_args()
 
+mA_list = [100]
+mphi_list = [200]
 
-#mA_list = [100,300,500]
-#mphi_list = [100,300,500]
-mA_list = [500]
-mphi_list = [500]
-
+#tanbeta_reweights = [20,40,60,80,120,140,160,180,200]
+tanbeta_reweights = [120,140,160,180,200]
 
 ### Input params needed for type X 2HDM ###
-tanb   = 1.00
+tanb   = 100.00
 vev    = 246.0
-yme    = 0.00
-ymm    = 0.00
 ymtau  = 1.777
-ymup   = 0.00
-ymdo   = 0.00
-ymc    = 0.00
-yms    = 0.00
 ymt    = 173.00
 ymb    = 4.70
 
+
 ### Calculated values ###
 
-GLR1x1 = (yme/vev) * (2**0.5) * tanb # Type I use -/, Type II use *, Type X use *
-GLR2x2 = (ymm/vev) * (2**0.5) * tanb
-GLR3x3 = (ymtau/vev) * (2**0.5) * tanb
+yukawa_per_tanb = {}
 
-GLI1x1 = 0
-GLI2x2 = 0
-GLI3x3 = 0
+yukawa_per_tanb["GLR3x3"] = {}
+yukawa_per_tanb["GDR3x3"] = {}
+yukawa_per_tanb["GUR3x3"] = {}
 
-GDR1x1 = -(ymdo/vev) * (2**0.5) / tanb # Type I use -/, Type II use *, Type X use -/
-GDR2x2 = -(yms/vev) * (2**0.5) / tanb
-GDR3x3 = -(ymb/vev) * (2**0.5) / tanb
 
-GDI1x1 = 0
-GDI2x2 = 0
-GDI3x3 = 0
-
-GUR1x1 = -(yme/vev) * (2**0.5) / tanb # Type I use -/, Type II use -/, Type X use -/
-GUR2x2 = -(ymm/vev) * (2**0.5) / tanb
-GUR3x3 = -(ymtau/vev) * (2**0.5) / tanb
-
-GUI1x1 = 0
-GUI2x2 = 0
-GUI3x3 = 0
-
+for tb in [tanb]+tanbeta_reweights:
+  yukawa_per_tanb["GLR3x3"][tb] = (ymtau/vev) * (2**0.5) * tb # Type I use -/, Type II use *, Type X use *, Type Y use -/
+  yukawa_per_tanb["GDR3x3"][tb] = -(ymb/vev) * (2**0.5) / tb # Type I use -/, Type II use *, Type X use -/, Type Y use *
+  yukawa_per_tanb["GUR3x3"][tb] = -(ymt/vev) * (2**0.5) / tb # Type I use -/, Type II use -/, Type X use -/, Type Y use ./
+  
 l2 = (125/vev)**2 # lambda 2 SM only
 l3 = (125/vev)**2 # lambda 3 SM only
 
@@ -65,78 +47,15 @@ customize_card = [
 "set param_card mass 35 __mH__", # mh2 - heavy neutral scalar Higgs mass
 "set param_card mass 36 __mA__", # mh3 - pseudoscalar Higgs mass
 "set param_card mass 37 __mHc__", # mhc - charged Higgs mass
-"set param_card higgs 6 0", # mixh2 - CP conserving
-"set param_card higgs 7 0", # mixh3 - CP conserving
-"set param_card higgs 3 0", # LR7 - CP conserving
-"set param_card higgs 4 0", # LI7 - CP conserving
 "set param_card higgs 5 __mixh__", # mixh - alignment scenario sin(b-a)=1 => mixh=0, cos(b-a)=1 => mixh=pi/2
 "set param_card higgs 1 {}".format(l2), # lambda 2 Higgs potential, assumed SM
 "set param_card higgs 2 {}".format(l3), # lambda 3 Higgs potential, assumed SM
-
-"set param_card yukawaglr 1 1 {}".format(GLR1x1),
-"set param_card yukawaglr 1 2 0",
-"set param_card yukawaglr 1 3 0",
-"set param_card yukawaglr 2 1 0",
-"set param_card yukawaglr 2 2 {}".format(GLR2x2),
-"set param_card yukawaglr 2 3 0",
-"set param_card yukawaglr 3 1 0",
-"set param_card yukawaglr 3 2 0",
-"set param_card yukawaglr 3 3 {}".format(GLR3x3),
-
-
-"set param_card yukawagli 1 1 {}".format(GLI1x1),
-"set param_card yukawagli 1 2 0",
-"set param_card yukawagli 1 3 0",
-"set param_card yukawagli 2 1 0",
-"set param_card yukawagli 2 2 {}".format(GLI2x2),
-"set param_card yukawagli 2 3 0",
-"set param_card yukawagli 3 1 0",
-"set param_card yukawagli 3 2 0",
-"set param_card yukawagli 3 3 {}".format(GLI3x3),
-
-"set param_card yukawagdr 1 1 {}".format(GDR1x1),
-"set param_card yukawagdr 1 2 0",
-"set param_card yukawagdr 1 3 0",
-"set param_card yukawagdr 2 1 0",
-"set param_card yukawagdr 2 2 {}".format(GDR2x2),
-"set param_card yukawagdr 2 3 0",
-"set param_card yukawagdr 3 1 0",
-"set param_card yukawagdr 3 2 0",
-"set param_card yukawagdr 3 3 {}".format(GDR3x3),
-
-
-"set param_card yukawagdi 1 1 {}".format(GDI1x1),
-"set param_card yukawagdi 1 2 0",
-"set param_card yukawagdi 1 3 0",
-"set param_card yukawagdi 2 1 0",
-"set param_card yukawagdi 2 2 {}".format(GDI2x2),
-"set param_card yukawagdi 2 3 0",
-"set param_card yukawagdi 3 1 0",
-"set param_card yukawagdi 3 2 0",
-"set param_card yukawagdi 3 3 {}".format(GDI3x3),
-
-"set param_card yukawagur 1 1 {}".format(GUR1x1),
-"set param_card yukawagur 1 2 0",
-"set param_card yukawagur 1 3 0",
-"set param_card yukawagur 2 1 0",
-"set param_card yukawagur 2 2 {}".format(GUR2x2),
-"set param_card yukawagur 2 3 0",
-"set param_card yukawagur 3 1 0",
-"set param_card yukawagur 3 2 0",
-"set param_card yukawagur 3 3 {}".format(GUR3x3),
-
-
-"set param_card yukawagui 1 1 {}".format(GUI1x1),
-"set param_card yukawagui 1 2 0",
-"set param_card yukawagui 1 3 0",
-"set param_card yukawagui 2 1 0",
-"set param_card yukawagui 2 2 {}".format(GUI2x2),
-"set param_card yukawagui 2 3 0",
-"set param_card yukawagui 3 1 0",
-"set param_card yukawagui 3 2 0",
-"set param_card yukawagui 3 3 {}".format(GUI3x3),
+"set param_card yukawaglr 3 3 {}".format(yukawa_per_tanb["GLR3x3"][tanb]),
+"set param_card yukawagdr 3 3 {}".format(yukawa_per_tanb["GDR3x3"][tanb]),
+"set param_card yukawagur 3 3 {}".format(yukawa_per_tanb["GUR3x3"][tanb]),
                  ]
 
+#customize_card = []
 
 proc_card = [
 "set default_unset_couplings 99",
@@ -154,10 +73,10 @@ proc_card = [
 "define l- = e- mu-",
 "define vl = ve vm vt",
 "define vl~ = ve~ vm~ vt~",
-"import model 2HDM_NLO",
+"import model 2HDM_NLO-typeX___scenario__",
 "define p = g u c d s b u~ c~ d~ s~ b~",
 "define j = p",
-"generate p p > __phi__ h3 [QCD]",
+"generate p p  > __phi__ h3 [QCD]",
 "output phi__mphi__A__mA__To4Tau -nojpeg ",
             ]
 
@@ -338,6 +257,35 @@ run_card = [
 "#***********************************************************************",
 ]
 
+reweight_card = [
+"change rwgt_dir ./rwgt",
+#"launch --rwgt_name=typeI",
+#"  set yukawaglr 3 3 {}".format(-yukawa_per_tanb["GLR3x3"][tb]/(tb**2)),
+#"  set yukawagdr 3 3 {}".format(yukawa_per_tanb["GDR3x3"][tb]),
+#"  set yukawagur 3 3 {}".format(yukawa_per_tanb["GUR3x3"][tb]),
+#"launch --rwgt_name=typeII",
+#"  set yukawaglr 3 3 {}".format(yukawa_per_tanb["GLR3x3"][tb]),
+#"  set yukawagdr 3 3 {}".format(-(tb**2)*yukawa_per_tanb["GDR3x3"][tb]),
+#"  set yukawagur 3 3 {}".format(yukawa_per_tanb["GUR3x3"][tb]),
+#"launch --rwgt_name=typeY",
+#"  set yukawaglr 3 3 {}".format(-yukawa_per_tanb["GLR3x3"][tb]/(tb**2)),
+#"  set yukawagdr 3 3 {}".format(-(tb**2)*yukawa_per_tanb["GDR3x3"][tb]),
+#"  set yukawagur 3 3 {}".format(yukawa_per_tanb["GUR3x3"][tb]),
+]
+
+tanbeta_reweight_card_section = [
+"launch --rwgt_name=tanb__tanbeta__",
+"  set yukawaglr 3 3 __lr33__",
+"  set yukawagdr 3 3 __dr33__",
+"  set yukawagur 3 3 __ur33__",
+
+]
+
+extramodels_card = [
+"#Load extra models",
+"2HDM_NLO.tar.gz"
+]
+
 submit_file = [
 "source /vols/grid/cms/setup.sh",
 "./gridpack_generation.sh __filename__ __directory__/__filename__"
@@ -362,12 +310,23 @@ def WriteListToFile(lst,output_name):
     textfile.write(i + "\n")
   textfile.close()
 
+
+### setup reweight card ###
+for tb in tanbeta_reweights:
+ find_list = ["__tanbeta__","__lr33__","__dr33__","__ur33__"]
+ replace_list = [tb,yukawa_per_tanb["GLR3x3"][tb],yukawa_per_tanb["GDR3x3"][tb],yukawa_per_tanb["GUR3x3"][tb]]
+ reweight_card += AppendLinesInList(tanbeta_reweight_card_section,find_list,replace_list)
+
+
+### setup and write cards ###
 directory = "cards/4tau"
 if not os.path.isdir(directory): os.system("mkdir "+directory)
 for mA in mA_list:
   for mphi in mphi_list:
     filename = "phi{}A{}To4Tau".format(int(mphi),int(mA))
-    if not os.path.isdir(directory+"/"+filename): os.system("mkdir "+directory+"/"+filename)
+    if os.path.isdir(directory+"/"+filename): os.system("rm -r "+directory+"/"+filename)
+    os.system("mkdir "+directory+"/"+filename)
+    if os.path.isdir(filename): os.system("rm -r "+filename)
 
     # Determine alignment scenario
     if mphi > 125: # Normal alignment
@@ -375,21 +334,26 @@ for mA in mA_list:
       mH = mphi
       sinbma = 1
       phi = "h2"
+      scenario = "normal"
     else: # Inverted alignment
       mh = mphi
       mH = 125
       sinbma = 0
       phi = "h1"
+      scenario = "inverted"
     mixh   = (m.pi/2) - m.asin(sinbma)
     mHc = mphi
 
-    find_list = ["__mA__","__mH__","__mh__","__mixh__","__mHc__","__phi__","__mphi__"]
-    replace_list = [mA,mH,mh,mixh,mHc,phi,mphi]
+    find_list = ["__mA__","__mH__","__mh__","__mixh__","__mHc__","__phi__","__mphi__","__scenario__"]
+    replace_list = [mA,mH,mh,mixh,mHc,phi,mphi,scenario]
     WriteListToFile(AppendLinesInList(customize_card,find_list,replace_list),directory+"/"+filename+"/"+filename+"_customizecards.dat")
     WriteListToFile(AppendLinesInList(proc_card,find_list,replace_list),directory+"/"+filename+"/"+filename+"_proc_card.dat")
     WriteListToFile(AppendLinesInList(run_card,find_list,replace_list),directory+"/"+filename+"/"+filename+"_run_card.dat")
+    #WriteListToFile(reweight_card,directory+"/"+filename+"/"+filename+"_reweight_card.dat")
+    WriteListToFile(extramodels_card,directory+"/"+filename+"/"+filename+"_extramodels.dat")
 
-    if args.generate and not args.submit: os.system("./gridpack_generation.sh {} {}/{}".format(filename,directory,filename))
+    if args.generate and not args.submit: 
+      os.system("./gridpack_generation.sh {} {}/{}".format(filename,directory,filename))
     if args.submit:
       WriteListToFile(AppendLinesInList(submit_file,["__filename__","__directory__"],[filename,directory]),filename+"_gridpack_submissions.sh")
       os.system("qsub -e {}_gridpack_submissions_error.txt -o {}_gridpack_submissions_output.txt -V -q hep.q -l h_rt=0:600:0 -cwd {}_gridpack_submissions.sh".format(filename,filename,filename))
