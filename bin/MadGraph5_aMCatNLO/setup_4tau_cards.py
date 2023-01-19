@@ -9,11 +9,16 @@ parser.add_argument('--generate', help= 'Generate gridpacks',  action='store_tru
 parser.add_argument('--submit', help= 'Submit gridpack generation jobs',  action='store_true')
 args = parser.parse_args()
 
-mA_list = [100]
-mphi_list = [200]
+
+
+mA_list = [60,70,80,90,100,125,140,160]
+mphi_list = [100,110,125,140,160,180,200,250,300]
+
 
 #tanbeta_reweights = [20,40,60,80,120,140,160,180,200]
 tanbeta_reweights = [120,140,160,180,200]
+
+#for tanb in [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150]:
 
 ### Input params needed for type X 2HDM ###
 tanb   = 100.00
@@ -77,7 +82,7 @@ proc_card = [
 "define p = g u c d s b u~ c~ d~ s~ b~",
 "define j = p",
 "generate p p  > __phi__ h3 [QCD]",
-"output phi__mphi__A__mA__To4Tau -nojpeg ",
+"output ZstarTophi__mphi__A__mA__To4Tau -nojpeg ",
             ]
 
 run_card = [
@@ -147,10 +152,11 @@ run_card = [
 "#***********************************************************************",
 "# PDF choice: this automatically fixes also alpha_s(MZ) and its evol.  *",
 "#***********************************************************************",
-" nn23nlo = pdlabel ! PDF set",
-" 244600  = lhaid   ! If pdlabel=lhapdf, this is the lhapdf number. Only",
+" lhapdf = pdlabel ! PDF set",
+" $DEFAULT_PDF_SETS  = lhaid   ! If pdlabel=lhapdf, this is the lhapdf number. Only",
 "              ! numbers for central PDF sets are allowed. Can be a list;",
 "              ! PDF sets beyond the first are included via reweighting.",
+" $DEFAULT_PDF_MEMBERS  = reweight_PDF",
 "#***********************************************************************",
 "# Include the NLO Monte Carlo subtr. terms for the following parton    *",
 "# shower (HERWIG6 | HERWIGPP | PYTHIA6Q | PYTHIA6PT | PYTHIA8)         *",
@@ -323,7 +329,7 @@ directory = "cards/4tau"
 if not os.path.isdir(directory): os.system("mkdir "+directory)
 for mA in mA_list:
   for mphi in mphi_list:
-    filename = "phi{}A{}To4Tau".format(int(mphi),int(mA))
+    filename = "ZstarTophi{}A{}To4Tau".format(int(mphi),int(mA))
     if os.path.isdir(directory+"/"+filename): os.system("rm -r "+directory+"/"+filename)
     os.system("mkdir "+directory+"/"+filename)
     if os.path.isdir(filename): os.system("rm -r "+filename)
